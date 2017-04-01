@@ -1,0 +1,23 @@
+* {
+    border-radius: 0 !important;
+    font-family: 'Lato', sans-serif !important;
+}
+
+.navbar-cpanel {
+    background-color: #293a4a;
+    border-color: #293a4a;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-cpanel a {
+    color: #e2e2e2;
+}
+
+.navbar-cpanel .navbar-nav a:hover {
+    background-color: transparent;
+    color: #fff;
+}
+
+.sidebar i {
+    padding-right: 10px;
+}
