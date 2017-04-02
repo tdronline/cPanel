@@ -1,4 +1,6 @@
 <?php
+require_once ('config.php');
+
 function createVHost($host = '')
 {
 	$doc_root = DOC_ROOT;
@@ -7,12 +9,12 @@ function createVHost($host = '')
 #VirtualHost $host      -------------------------------
 <VirtualHost *:80>
     ServerAdmin admin@$host
-    DocumentRoot \"$doc_root$host\"
+    DocumentRoot \"$doc_root\\$host\"
     ServerName www.$host
     ServerAlias $host
     ErrorLog \"logs/$host-error.log\"
     CustomLog \"logs/$host-access.log\" common
-    <Directory  \"$doc_root$host\">
+    <Directory  \"$doc_root\\$host\">
         Options +Indexes +FollowSymLinks +MultiViews
         AllowOverride All
         Require local
@@ -33,7 +35,7 @@ function createHost($host)
 
 function createDirectory ($host) {
     if(!is_dir(DOC_ROOT.$host)){
-      return mkdir(DOC_ROOT.$host, 0777, true);
+      return mkdir(DOC_ROOT.'\/'.$host, 0777, true);
     }else{
         return FALSE;
     }
@@ -100,4 +102,40 @@ function checkHost($host)
         fclose($file);
     }
     return $match;
+}
+
+function viewHosts()
+{
+    if ($file = fopen(HOST_FILE, "r")) {
+        $match = '';
+        while (!feof($file)) {
+            $line = ltrim(fgets($file));
+            if (substr($line, 0, 9) == '127.0.0.1') {
+              $match .= $line;
+            }
+        }
+        fclose($file);
+    }
+    return $match;
+}
+
+function config(){
+    if(is_file('config.php')){
+        $conf = array();
+        if ($file = fopen('config.php', "r")) {
+            while (!feof($file)) {
+                $line = ltrim(fgets($file));
+                if (preg_match("/\bDEFINE?\b/", $line)) {
+                    $line = trim($line);
+                    $line = substr($line,8);
+                    $line = substr($line,0,-3);
+                    $line = str_replace("'",'',$line);
+                    $line = explode(",",$line);
+                    $conf[$line[0]] = $line[1];
+                }
+            }
+            fclose($file);
+        }
+    }
+    return $conf;
 }

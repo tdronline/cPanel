@@ -1,4 +1,4 @@
-<?php require_once('config.php'); ?>
+<?php require_once('functions.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,31 +28,30 @@
       </button>
       <a class="navbar-brand" href="#">cPanel Local</a>
     </div>
-
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
+        <ul class="nav navbar-nav navbar-right">
+            <li id="config"><a href="#"><i class="icon-cog"></i></a></li>
+        </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
 <div class="row">
     <div class="col-md-3 sidebar">
-        <ul class="list-group">
-            <li class="list-group-item"><i class="icon-plus"></i> Add Host</li>
-            <li class="list-group-item"><i class="icon-sphere"></i> Domains</li>
-            <li class="list-group-item"><i class="icon-cog"></i> Configuration</li>
+        <ul class="list-group" id="sidenav">
+            <li class="list-group-item" id="addhost"><i class="icon-plus"></i> Add Host</li>
+            <li class="list-group-item" id="viewdomains"><i class="icon-sphere"></i> Domains</li>
         </ul>
     </div>
     <div class="col-md-9">
-        <?php
-        //$host = 'cpanel.local';
-        //createEntry($host);
-        ?>
+        <div id="response"></div>
     </div>
 </div>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+<script src="js/jquery-3.2.0.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
 </body>
 </html>

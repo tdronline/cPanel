@@ -21,3 +21,9 @@
 .sidebar i {
     padding-right: 10px;
 }
+#sidenav li{
+    cursor: pointer;
+}
+#sidenav li:hover{
+    color: #1b6d85;
+}
