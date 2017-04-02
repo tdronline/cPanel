@@ -139,3 +139,7 @@ function config(){
     }
     return $conf;
 }
+
+function createDB($db) {
+    //TODO Add MySQL Details.
+}

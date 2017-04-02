@@ -12,12 +12,14 @@ if($fn == 'addhost') {
     <div class='well well-sm'>
     <div class='checkbox'>
         <label>
-            <input type='checkbox'> Create Database
+            <input type='checkbox' id='createdb'> Create Database
         </label>
     </div>
+    <div class='dbcon'>
     <div class='form-group'>
     <label class='control-label'>DB Name</label>
     <input type='text' class='form-control' id='dbname' placeholder='my_database' />
+    </div>
     </div>
 </div>
    <button type='button' id='adddomain' class='btn btn-default'>Add Host</button> ";
@@ -63,5 +65,7 @@ DEFINE('DOC_ROOT','$webroot');
 
 if($fn == 'savehost') {
     $host = trim($_REQUEST['host']);
+    $db = trim($_REQUEST['db']);
     createEntry($host);
+    createDB($db);
 }

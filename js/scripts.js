@@ -52,7 +52,11 @@ $(document).on('click','#saveconfig',function() {
 // Add new domain
 $(document).on('click','#adddomain',function() {
     var host = $("#localdomain").val();
-    var db = $("#dbname").val();
+    if ($("#createdb").is(':checked')) {
+        var db = $("#dbname").val();
+    }else {
+        var db = '';
+    }
     if(host.length > 5){
         $.post("ajax.php", {fn: 'savehost', host: host, db: db})
             .done(function (data) {
@@ -60,5 +64,14 @@ $(document).on('click','#adddomain',function() {
                     $('#hints').html(data);
                 }
             });
+    }
+});
+
+//Add DB Container
+$(document).on('click','#createdb',function() {
+    if ($("#createdb").is(':checked')) {
+        $('.dbcon').fadeIn();
+    }else {
+        $('.dbcon').fadeOut();
     }
 });

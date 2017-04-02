@@ -27,3 +27,6 @@
 #sidenav li:hover{
     color: #1b6d85;
 }
+.dbcon {
+    display: none;
+}
