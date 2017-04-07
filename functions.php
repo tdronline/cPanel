@@ -4,7 +4,7 @@ require_once ('config.php');
 function createVHost($host = '')
 {
 	$doc_root = DOC_ROOT;
-    $vhostScript = "
+    $vhostScriptApache = "
 
 #VirtualHost $host      -------------------------------
 <VirtualHost *:80>
@@ -22,6 +22,32 @@ function createVHost($host = '')
     </Directory>
 </VirtualHost>
 #-------------------------------------------------------";
+
+$vhostScriptNginx = "#VirtualHost $host      -------------------------------
+server {
+    listen       80;
+    server_name  $host  www.$host;
+
+    location / {
+        root   $doc_root\\$host;
+        index  index.php index.html index.htm;".
+        'try_files $uri $uri/ /index.php?$args;
+    }
+    
+    location ~ \\.php$ {'.
+        "root   D:/root/www/$host;
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;".
+        'fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;'."
+        include        fastcgi_params;
+    }
+}
+#-------------------------------------------------------";
+    if(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'Apache'){
+        $vhostScript =  $vhostScriptApache;
+    }elseif(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'nginx') {
+        $vhostScript =  $vhostScriptNginx;
+    }
     return $vhostScript;
 }
 
@@ -34,8 +60,10 @@ function createHost($host)
 }
 
 function createDirectory ($host) {
-    if(!is_dir(DOC_ROOT.$host)){
-      return mkdir(DOC_ROOT.'\/'.$host, 0777, true);
+    if(!is_dir(DOC_ROOT.'\/'.$host)){
+      mkdir(DOC_ROOT.'\/'.$host, 0777, true);
+      return file_put_contents(DOC_ROOT.'\/'.$host."/index.php","<?php phpinfo(); ?>");
+
     }else{
         return FALSE;
     }
@@ -49,6 +77,8 @@ function createEntry($host)
         $hostCheck = checkHost($host);
         $vhostCheck = checkVHost($host);
         $createDIR = createDirectory ($host);
+
+        // Add Windows Host File Entry
         if ($hostCheck == '') {
             if(file_put_contents(HOST_FILE, $hostEntry, FILE_APPEND | LOCK_EX)){
                 echo "<div class='alert alert-success' role='alert'>Successfully Updated Host File.</div>";
@@ -56,13 +86,33 @@ function createEntry($host)
         } else {
             echo "<div class='alert alert-danger' role='alert'>Host file entry [$hostCheck] exists!</div>";
         }
-        if ($vhostCheck == '') {
-            if(file_put_contents(VHOST, $vHostEntry, FILE_APPEND | LOCK_EX)){
-                echo "<div class='alert alert-success' role='alert'>Successfully Updated Virtual Host File.</div>";
+
+        if(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'Apache'){
+
+            //Apache Host File Entry
+            if ($vhostCheck == '') {
+                if(file_put_contents(APACHE_VHOST, $vHostEntry, FILE_APPEND | LOCK_EX)){
+                    echo "<div class='alert alert-success' role='alert'>Successfully Updated Apache Virtual Host File.</div>";
+                }
+            } else {
+                echo "<div class='alert alert-danger' role='alert'>Virtual Host file entry exists!</div> <pre>$vhostCheck</pre>";
             }
-        } else {
-            echo "<div class='alert alert-danger' role='alert'>Virtual Host file entry exists!</div> <pre>$vhostCheck</pre>";
+
+        }elseif(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'nginx') {
+
+            //NGINX host file creation
+            if ($vhostCheck == '') {
+                if(is_dir(NGINX_VHOST)) {
+                    if (file_put_contents(NGINX_VHOST."/$host.conf", $vHostEntry)) {
+                        echo "<div class='alert alert-success' role='alert'>Successfully Created NGINX Host File.</div>";
+                    }
+                }else {
+                    echo "<div class='alert alert-danger' role='alert'>Virtual Host file entry exists!</div> <pre>$vhostCheck</pre>";
+                }
+            }
         }
+
+        // Create directory in web root
         if ($createDIR == TRUE) {
             echo "<div class='alert alert-success' role='alert'>Successfully Created Directory.</div>";
         } else {
@@ -73,16 +123,22 @@ function createEntry($host)
 
 function checkVHost($host)
 {
-    if ($file = fopen(VHOST, "r")) {
-        $match = '';
-        while (!feof($file)) {
-            $line = ltrim(fgets($file));
-            if (preg_match("/\b$host?\b/", $line)) {
-                $match .= $line;
+    $match = '';
+    if(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'Apache'){
+        if ($file = fopen(APACHE_VHOST, "r")) {
+
+            while (!feof($file)) {
+                $line = ltrim(fgets($file));
+                if (preg_match("/\b$host?\b/", $line)) {
+                    $match .= $line;
+                }
             }
+            fclose($file);
         }
-        fclose($file);
+    }elseif(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'nginx') {
+        if(is_file(NGINX_VHOST."/$host.conf")) {$match = $host;}
     }
+
     return $match;
 }
 

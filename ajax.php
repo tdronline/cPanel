@@ -43,14 +43,18 @@ if($fn == 'chkdomain'){
 
 if($fn == 'saveconf') {
     $host = trim($_REQUEST['host']);
-    $vhost = trim($_REQUEST['vhost']);
+    $apache_vhost = trim($_REQUEST['apache_vhost']);
+    $nginx_vhost = trim($_REQUEST['nginx_vhost']);
     $webroot = trim($_REQUEST['webroot']);
-    if(!empty($host) && !empty($vhost) && !empty($webroot)) {
+
+    if(!empty($host) && !empty($apache_vhost) && !empty($nginx_vhost) && !empty($webroot)) {
         $configEntry = "<?php
 DEFINE('HOST_FILE','$host');
-DEFINE('VHOST','$vhost');
+DEFINE('APACHE_VHOST','$apache_vhost');
+DEFINE('NGINX_VHOST','$nginx_vhost');
 DEFINE('DOC_ROOT','$webroot');
     ";
+        echo $configEntry;
         if (is_file('config.php')) {
             if (file_put_contents('config.php', $configEntry)) {
                 echo "<div class='alert alert-success' role='alert'>Successfully Updated Config File.</div>";

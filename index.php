@@ -43,6 +43,16 @@
             <li class="list-group-item" id="addhost"><i class="icon-plus"></i> Add Host</li>
             <li class="list-group-item" id="viewdomains"><i class="icon-sphere"></i> Domains</li>
         </ul>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <span class="badge"><?php echo substr($_SERVER["SERVER_SOFTWARE"],0,14); ?></span>
+                Web Server
+            </li>
+            <li class="list-group-item">
+                <span class="badge"><?php echo phpversion (); ?></span>
+                PHP Version
+            </li>
+        </ul>
     </div>
     <div class="col-md-9">
         <div id="response"></div>

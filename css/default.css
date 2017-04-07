@@ -21,6 +21,10 @@
 .sidebar i {
     padding-right: 10px;
 }
+.sidebar .badge {
+    font-weight: 400;
+    letter-spacing: .5px;
+}
 #sidenav li{
     cursor: pointer;
 }

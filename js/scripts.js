@@ -41,9 +41,10 @@ $(document).on('keyup','#localdomain',function() {
 //Save Config File
 $(document).on('click','#saveconfig',function() {
     var host = $('#hostsfile').val();
-    var vhost = $('#vhosts').val();
+    var apache_vhost = $('#apache_vhosts').val();
+    var nginx_vhost = $('#nginx_vhosts').val();
     var webroot = $('#webroot').val();
-    $.post("ajax.php", {fn: 'saveconf', host: host, vhost: vhost, webroot: webroot})
+    $.post("ajax.php", {fn: 'saveconf', host: host, apache_vhost: apache_vhost, nginx_vhost: nginx_vhost, webroot: webroot})
         .done(function (data) {
             $('#info').html(data);
         });
