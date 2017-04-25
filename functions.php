@@ -4,45 +4,47 @@ require_once ('config.php');
 function createVHost($host = '')
 {
 	$doc_root = DOC_ROOT;
-    $vhostScriptApache = "
-
-#VirtualHost $host      -------------------------------
+    $vhostScriptApache =<<< EOFLOCAL
+#VirtualHost {$host}      -------------------------------
 <VirtualHost *:80>
-    ServerAdmin admin@$host
-    DocumentRoot \"$doc_root\\$host\"
-    ServerName www.$host
-    ServerAlias $host
-    ErrorLog \"logs/$host-error.log\"
-    CustomLog \"logs/$host-access.log\" common
-    <Directory  \"$doc_root\\$host\">
+    ServerAdmin admin@{$host}
+    DocumentRoot \"{$doc_root}\{$host}\"
+    ServerName www.{$host}
+    ServerAlias {$host}
+    ErrorLog \"logs/{$host}-error.log\"
+    CustomLog \"logs/{$host}-access.log\" common
+    <Directory  \"{$doc_root}\{$host}\">
         Options +Indexes +FollowSymLinks +MultiViews
         AllowOverride All
         Require local
         Require all granted
     </Directory>
 </VirtualHost>
-#-------------------------------------------------------";
+#-------------------------------------------------------;
+EOFLOCAL;
 
-$vhostScriptNginx = "#VirtualHost $host      -------------------------------
+$vhostScriptNginx = <<< EOFLOCAL
+#VirtualHost {host}      -------------------------------
 server {
-    listen       80;
-    server_name  $host  www.$host;
+	listen       80;
+	server_name  .{$host};
+	root   D:/root/www/{$host};
+	index  index.php index.html index.htm;
 
-    location / {
-        root   $doc_root\\$host;
-        index  index.php index.html index.htm;".
-        'try_files $uri $uri/ /index.php?$args;
-    }
-    
-    location ~ \\.php$ {'.
-        "root   D:/root/www/$host;
-        fastcgi_pass   127.0.0.1:9000;
-        fastcgi_index  index.php;".
-        'fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;'."
-        include        fastcgi_params;
-    }
+	location / {
+		try_files \$uri \$uri/ /index.php?\$args;
+	}
+	
+	location ~ \.php$ {
+		fastcgi_pass   127.0.0.1:9000;
+		fastcgi_index  index.php;
+		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+		include        fastcgi_params;
+	}
 }
-#-------------------------------------------------------";
+#-------------------------------------------------------;
+EOFLOCAL;
+
     if(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'Apache'){
         $vhostScript =  $vhostScriptApache;
     }elseif(substr($_SERVER["SERVER_SOFTWARE"],0,5) == 'nginx') {
@@ -61,9 +63,8 @@ function createHost($host)
 
 function createDirectory ($host) {
     if(!is_dir(DOC_ROOT.'\/'.$host)){
-      mkdir(DOC_ROOT.'\/'.$host, 0777, true);
+      @mkdir(DOC_ROOT.'\/'.$host, 0777, true);
       return file_put_contents(DOC_ROOT.'\/'.$host."/index.php","<?php phpinfo(); ?>");
-
     }else{
         return FALSE;
     }
