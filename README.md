@@ -17,4 +17,4 @@ That's it. If you find any errors creating files please check permissions becaus
 
 Let me know what you think. 
 
-tdr(@)tdronline.info
+hello(@)tharindur.com
